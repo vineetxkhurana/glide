@@ -1,0 +1,15 @@
+{
+    "name": "glide",
+    "version": "1.0.0",
+    "private": true,
+    "type": "module",
+    "workspaces": [
+      "apps/*",
+      "packages/*"
+    ],
+    "dependencies": {
+      "compromise": "^14.14.5",
+      "tsx": "^4.21.0"
+    }
+  }
+  

@@ -1,0 +1,19 @@
+1
+00:00:01,000 --> 00:00:03,000
+<b>Mi</b>ke <b>Dono</b>van <b>arri</b>ved <b>yest</b>erday.
+
+2
+00:00:04,000 --> 00:00:06,000
+<b>Sar</b>ah <b>Ch</b>en is <b>th</b>e <b>le</b>ad <b>engi</b>neer.
+
+3
+00:00:07,000 --> 00:00:09,000
+Dr. <b>Rodri</b>guez <b>wi</b>ll <b>pres</b>ent <b>tomo</b>rrow.
+
+4
+00:00:10,000 --> 00:00:12,000
+<b>Profe</b>ssor <b>Will</b>iams <b>teac</b>hes <b>mathem</b>atics.
+
+5
+00:00:13,000 --> 00:00:15,000
+<b>Tok</b>yo is <b>beaut</b>iful in <b>spr</b>ing.

@@ -1,0 +1,19 @@
+1
+00:00:01,000 --> 00:00:03,000
+<b>Mike</b> <b>Donovan</b> arrived yesterday.
+
+2
+00:00:04,000 --> 00:00:06,000
+<b>Sarah</b> <b>Chen</b> is the lead engineer.
+
+3
+00:00:07,000 --> 00:00:09,000
+Dr. <b>Rodriguez</b> will <b>present</b> tomorrow.
+
+4
+00:00:10,000 --> 00:00:12,000
+<b>Professor</b> <b>Williams</b> teaches mathematics.
+
+5
+00:00:13,000 --> 00:00:15,000
+<b>Tokyo</b> is <b>beautiful</b> in spring.

@@ -1,0 +1,27 @@
+1
+00:00:01,000 --> 00:00:03,000
+"Hello," she <b>said</b> quietly.
+
+2
+00:00:04,000 --> 00:00:06,000
+<b>Wait</b>— what's  <b>happening</b>?
+
+3
+00:00:07,000 --> 00:00:09,000
+<b>It's</b>  <b>amazing</b>! Really, truly amazing.
+
+4
+00:00:10,000 --> 00:00:12,000
+(whispers) <b>Don't</b>  <b>move</b>...
+
+5
+00:00:13,000 --> 00:00:15,000
+[MUSIC PLAYING]
+
+6
+00:00:16,000 --> 00:00:18,000
+Dr. <b>Smith's</b> research— <b>groundbreaking</b> work.
+
+7
+00:00:19,000 --> 00:00:21,000
+"Why?" he <b>asked</b>. "Why now?"

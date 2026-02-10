@@ -1,0 +1,27 @@
+1
+00:00:01,000 --> 00:00:03,000
+"Hello," <b>sh</b>e <b>sa</b>id <b>qui</b>etly.
+
+2
+00:00:04,000 --> 00:00:06,000
+<b>Wa</b>it—<b>wh</b>at's <b>happe</b>ning?
+
+3
+00:00:07,000 --> 00:00:09,000
+<b>It</b>'s <b>amaz</b>ing! <b>Rea</b>lly, <b>tr</b>uly <b>amaz</b>ing.
+
+4
+00:00:10,000 --> 00:00:12,000
+(whispers) <b>Do</b>n't <b>mo</b>ve...
+
+5
+00:00:13,000 --> 00:00:15,000
+[MUSIC PLAYING]
+
+6
+00:00:16,000 --> 00:00:18,000
+Dr. <b>Smi</b>th's <b>rese</b>arch—<b>groundb</b>reaking <b>wo</b>rk.
+
+7
+00:00:19,000 --> 00:00:21,000
+"Why?" he <b>ask</b>ed. "Why <b>no</b>w?"
