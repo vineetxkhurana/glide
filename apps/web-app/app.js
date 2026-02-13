@@ -158,7 +158,7 @@ processBtn.addEventListener('click', async () => {
     }
     
     if (data.truncated) {
-      showError('⚠️ Free tier: Only first 75 subtitle entries processed. Enter your license key to unlock unlimited processing.')
+      showError('⚠️ Free tier: Only first 300 subtitle entries processed. Enter your license key to unlock unlimited processing.')
     } else if (licenseKey) {
       if (window.plausible) window.plausible('license_used')
     }

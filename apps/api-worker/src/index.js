@@ -1,6 +1,19 @@
 import { Hono } from 'hono'
 import { cors } from 'hono/cors'
 import { processSubtitles } from '@glide/engine-core'
+import {
+  FREE_TIER_LIMIT,
+  LICENSE_CACHE_TTL_SECONDS,
+  LEMON_SQUEEZY_API_URL,
+  LICENSE_INSTANCE_NAME,
+  SUPPORTED_FORMATS,
+  SUPPORTED_MODES,
+  MIN_INTENSITY,
+  MAX_INTENSITY,
+  DEFAULT_INTENSITY,
+  RATE_LIMIT_REQUESTS,
+  RATE_LIMIT_WINDOW_SECONDS
+} from './constants.js'
 
 const app = new Hono()
 
@@ -8,11 +21,67 @@ app.use('/*', cors())
 
 app.get('/health', (c) => c.json({ status: 'ok' }))
 
-async function verifyLicense(key, env) {
+// Best-effort rate limiter using KV
+// Note: KV lacks atomic increment, so this is probabilistic under high concurrency
+// For strict rate limiting, migrate to Durable Objects
+async function checkRateLimit(ip, env) {
+  const kv = env.RATE_LIMIT_KV
+  if (!kv) return { allowed: true }
+  
+  const key = `ratelimit:${ip}`
+  const current = await kv.get(key)
+  
+  if (!current) {
+    await kv.put(key, '1', { expirationTtl: RATE_LIMIT_WINDOW_SECONDS })
+    return { allowed: true, remaining: RATE_LIMIT_REQUESTS - 1 }
+  }
+  
+  const count = parseInt(current, 10)
+  
+  if (count >= RATE_LIMIT_REQUESTS) {
+    return { allowed: false, remaining: 0 }
+  }
+  
+  await kv.put(key, String(count + 1), { expirationTtl: RATE_LIMIT_WINDOW_SECONDS })
+  return { allowed: true, remaining: RATE_LIMIT_REQUESTS - count - 1 }
+}
+
+async function verifyLicenseWithCache(key, env) {
   if (!key || !env?.LEMON_API_KEY) return { valid: false }
   
+  const cache = env.LICENSE_CACHE
+  if (!cache) {
+    console.warn('LICENSE_CACHE not available, skipping cache')
+    return verifyLicenseFromAPI(key, env)
+  }
+  
+  // Check cache first
+  const cacheKey = `license:${key}`
+  const cached = await cache.get(cacheKey, 'json')
+  
+  if (cached !== null) {
+    return cached
+  }
+  
+  // Cache miss - verify with API
+  const result = await verifyLicenseFromAPI(key, env)
+  
+  // Only cache valid licenses to prevent cache poisoning on API failures
+  if (result.valid) {
+    await cache.put(cacheKey, JSON.stringify(result), {
+      expirationTtl: LICENSE_CACHE_TTL_SECONDS
+    })
+  }
+  
+  return result
+}
+
+async function verifyLicenseFromAPI(key, env) {
+  const controller = new AbortController()
+  const timeoutId = setTimeout(() => controller.abort(), 5000)
+  
   try {
-    const response = await fetch('https://api.lemonsqueezy.com/v1/licenses/validate', {
+    const response = await fetch(LEMON_SQUEEZY_API_URL, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${env.LEMON_API_KEY}`,
@@ -21,9 +90,12 @@ async function verifyLicense(key, env) {
       },
       body: JSON.stringify({
         license_key: key,
-        instance_name: 'glide-web'
-      })
+        instance_name: LICENSE_INSTANCE_NAME
+      }),
+      signal: controller.signal
     })
+    
+    clearTimeout(timeoutId)
     
     if (!response.ok) {
       console.error('License verification HTTP error:', response.status)
@@ -34,7 +106,12 @@ async function verifyLicense(key, env) {
     const valid = data.valid === true || data?.meta?.valid === true || data?.license_key?.valid === true
     return { valid: !!valid }
   } catch (error) {
-    console.error('License verification error:', error)
+    clearTimeout(timeoutId)
+    if (error.name === 'AbortError') {
+      console.error('License verification timeout')
+    } else {
+      console.error('License verification error:', error)
+    }
     return { valid: false }
   }
 }
@@ -46,9 +123,9 @@ function truncateSubtitles(text, format) {
   
   if (format === 'plain') {
     return {
-      text: lines.slice(0, 75).join('\n'),
-      truncated: lines.length > 75,
-      linesProcessed: lines.length > 75 ? 75 : null
+      text: lines.slice(0, FREE_TIER_LIMIT).join('\n'),
+      truncated: lines.length > FREE_TIER_LIMIT,
+      linesProcessed: lines.length > FREE_TIER_LIMIT ? FREE_TIER_LIMIT : null
     }
   }
   
@@ -56,14 +133,14 @@ function truncateSubtitles(text, format) {
     for (const line of lines) {
       if (line.startsWith('Dialogue:')) {
         count++
-        if (count > 75) break
+        if (count > FREE_TIER_LIMIT) break
       }
       result.push(line)
     }
     return {
       text: result.join('\n'),
-      truncated: count > 75,
-      linesProcessed: count > 75 ? 75 : null
+      truncated: count > FREE_TIER_LIMIT,
+      linesProcessed: count > FREE_TIER_LIMIT ? FREE_TIER_LIMIT : null
     }
   }
   
@@ -71,39 +148,51 @@ function truncateSubtitles(text, format) {
   for (const line of lines) {
     if (line.includes('-->')) {
       count++
-      if (count > 75) break
+      if (count > FREE_TIER_LIMIT) break
     }
     result.push(line)
   }
   
   return {
     text: result.join('\n'),
-    truncated: count > 75,
-    linesProcessed: count > 75 ? 75 : null
+    truncated: count > FREE_TIER_LIMIT,
+    linesProcessed: count > FREE_TIER_LIMIT ? FREE_TIER_LIMIT : null
   }
 }
 
 app.post('/process', async (c) => {
   try {
+    // Rate limiting
+    const ip = c.req.header('CF-Connecting-IP') ?? 'unknown'
+    const rateLimit = await checkRateLimit(ip, c.env)
+    
+    if (!rateLimit.allowed) {
+      return c.json(
+        { error: 'Rate limit exceeded. Try again later.' },
+        429,
+        { 'Retry-After': String(RATE_LIMIT_WINDOW_SECONDS) }
+      )
+    }
+    
     const { text, format, mode, intensity, licenseKey } = await c.req.json()
     
     if (!text || !format || !mode) {
       return c.json({ error: 'Missing required fields' }, 400)
     }
     
-    if (!['srt', 'vtt', 'ass', 'plain'].includes(format)) {
-      return c.json({ error: 'format must be srt, vtt, ass, or plain' }, 400)
+    if (!SUPPORTED_FORMATS.includes(format)) {
+      return c.json({ error: `format must be one of: ${SUPPORTED_FORMATS.join(', ')}` }, 400)
     }
     
-    if (!['focus', 'calm'].includes(mode)) {
-      return c.json({ error: 'mode must be focus or calm' }, 400)
+    if (!SUPPORTED_MODES.includes(mode)) {
+      return c.json({ error: `mode must be one of: ${SUPPORTED_MODES.join(', ')}` }, 400)
     }
     
     const safeIntensity = typeof intensity === 'number' 
-      ? Math.min(1, Math.max(0.1, intensity))
-      : 0.5
+      ? Math.min(MAX_INTENSITY, Math.max(MIN_INTENSITY, intensity))
+      : DEFAULT_INTENSITY
     
-    const license = await verifyLicense(licenseKey, c.env)
+    const license = await verifyLicenseWithCache(licenseKey, c.env)
     
     let inputText = text
     let truncated = false
@@ -130,7 +219,8 @@ app.post('/process', async (c) => {
       linesProcessed
     })
   } catch (error) {
-    return c.json({ error: error.message }, 500)
+    console.error('Processing error:', error)
+    return c.json({ error: 'Internal server error' }, 500)
   }
 })
 
