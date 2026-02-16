@@ -4,13 +4,11 @@ compatibility_date = "2024-01-01"
 
 [[kv_namespaces]]
 binding = "LICENSE_CACHE"
-id = "placeholder"
-preview_id = "placeholder"
+id = "c5f87ebd1e224afd997f3c06866eacd8"
 
 [[kv_namespaces]]
 binding = "RATE_LIMIT_KV"
-id = "placeholder"
-preview_id = "placeholder"
+id = "af3f5b2dca754c24974e2ea8d4d7319f"
 
 [build]
 command = "npm run build"
