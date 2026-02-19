@@ -16,7 +16,7 @@ jobs:
           node-version: 20
           cache: npm
 
-      - run: npm ci
+      - run: npm ci --loglevel verbose
 
       - name: Build engine-core
         run: npm run build --workspace=packages/engine-core
@@ -25,4 +25,4 @@ jobs:
         run: npx tsc --noEmit --project packages/engine-core/tsconfig.json
 
       - name: Run tests
-        run: npx vitest run
+        run: npm run test --workspace=packages/engine-core || exit 1
