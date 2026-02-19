@@ -3,7 +3,107 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Glide - Bionic Subtitles for Creators</title>
+    <title>Glide – Bold Subtitles Tool for ADHD Viewers | Make SRT Captions Easier to Read</title>
+    <meta name="description" content="Glide makes subtitles easier to read by adding bold anchors to SRT, VTT, and ASS caption files. Designed for ADHD viewers, fatigued readers, and YouTube creators who want higher watch time.">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://glide-web-app.pages.dev/">
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Glide – Bold Subtitles Tool for ADHD & Fatigued Viewers">
+    <meta property="og:description" content="Make SRT, VTT, and ASS subtitles easier to read with automatic bold anchors. Focus and Calm modes for YouTube creators.">
+    <meta property="og:url" content="https://glide-web-app.pages.dev/">
+    <meta property="og:image" content="https://glide-web-app.pages.dev/logo.png">
+    <meta property="og:site_name" content="Glide">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Glide – Bold Subtitles Tool for ADHD & Fatigued Viewers">
+    <meta name="twitter:description" content="Make SRT, VTT, and ASS subtitles easier to read with automatic bold anchors. Focus and Calm modes for YouTube creators.">
+    <meta name="twitter:image" content="https://glide-web-app.pages.dev/logo.png">
+
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "Glide",
+      "url": "https://glide-web-app.pages.dev/",
+      "applicationCategory": "MultimediaApplication",
+      "operatingSystem": "Web",
+      "softwareVersion": "1.0.0",
+      "description": "Glide makes subtitles easier to read by adding bold cognitive anchors to SRT, VTT, and ASS caption files. Built for ADHD viewers, fatigued readers, and YouTube creators.",
+      "featureList": [
+        "Focus mode — NLP-driven partial-word bolding for deep reading",
+        "Calm mode — full-word bolding, max 2 words per line",
+        "SRT, VTT, and ASS subtitle format support",
+        "HTML tag preservation inside subtitle files",
+        "Adjustable intensity slider for Focus mode",
+        "REST API for developer integration",
+        "Free tier with 300 subtitle entries"
+      ],
+      "sameAs": [
+        "https://github.com/vineetxkhurana/glide"
+      ],
+      "offers": {
+        "@type": "Offer",
+        "price": "29",
+        "priceCurrency": "USD",
+        "description": "Lifetime license – unlimited subtitle processing"
+      }
+    }
+    </script>
+
+    <!-- FAQ Schema -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "What is Glide?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Glide is a free tool that adds bold cognitive anchors to SRT, VTT, and ASS subtitle files. It helps ADHD and fatigued viewers follow captions more easily, improving watch time for YouTube creators."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What is the difference between Focus mode and Calm mode?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Focus mode uses NLP to partially bold nouns, verbs, adjectives, and proper nouns with adjustable intensity. Calm mode is rule-based and bolds up to 2 entire words per line, choosing the longest and most meaningful. Focus suits tutorials and lectures; Calm suits vlogs and podcasts."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How do I make my SRT subtitles bold automatically?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Export your captions as an SRT, VTT, or ASS file from YouTube Studio or your video editor. Upload the file to Glide, choose Focus or Calm mode, and download the processed file. Upload it back to YouTube as a new subtitle track. It takes under 30 seconds."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Is Glide free?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. The free tier processes up to 300 subtitle entries per file with no account required. A one-time $29 lifetime license unlocks unlimited processing."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Does Glide work with YouTube subtitles?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. Export your captions from YouTube Studio as SRT or VTT, process them through Glide, and re-upload the enhanced file as a new caption track in YouTube Studio."
+          }
+        }
+      ]
+    }
+    </script>
+
     <link rel="icon" type="image/png" href="/logo.png">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -54,8 +154,8 @@
         }
         
         .logo-img {
-            width: 56px;
-            height: 56px;
+            width: 88px;
+            height: 88px;
         }
         
         .header-links {
@@ -698,6 +798,78 @@
                 transform: rotate(90deg);
             }
         }
+
+        /* Long-form content sections */
+        .content-section {
+            max-width: 50rem;
+            margin: 0 auto;
+            padding: clamp(2.5rem, 6vw, 4rem) clamp(1rem, 4vw, 1.5rem);
+        }
+
+        .content-section h2 {
+            font-size: clamp(1.5rem, 3vw, 1.75rem);
+            font-weight: 700;
+            margin-bottom: clamp(0.75rem, 2vw, 1rem);
+            color: #0B0B10;
+        }
+
+        .content-section h3 {
+            font-size: clamp(1.125rem, 2.5vw, 1.25rem);
+            font-weight: 600;
+            margin-top: clamp(1.5rem, 3vw, 2rem);
+            margin-bottom: clamp(0.5rem, 1vw, 0.75rem);
+            color: #0B0B10;
+        }
+
+        .content-section p {
+            font-size: clamp(0.938rem, 2vw, 1rem);
+            color: #525252;
+            line-height: 1.7;
+            margin-bottom: clamp(0.75rem, 2vw, 1rem);
+        }
+
+        .content-section ul {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 clamp(1rem, 2vw, 1.5rem) 0;
+        }
+
+        .content-section ul li {
+            font-size: clamp(0.938rem, 2vw, 1rem);
+            color: #525252;
+            line-height: 1.7;
+            padding: 0.25rem 0;
+            padding-left: 1.25rem;
+            position: relative;
+        }
+
+        .content-section ul li::before {
+            content: "•";
+            color: #1d4ed8;
+            font-weight: 700;
+            position: absolute;
+            left: 0;
+        }
+
+        /* Footer */
+        .site-footer {
+            max-width: 75rem;
+            margin: 0 auto;
+            padding: 2rem clamp(1rem, 4vw, 1.5rem);
+            text-align: center;
+            font-size: 0.75rem;
+            color: #a3a3a3;
+            border-top: 1px solid #e5e5e5;
+        }
+
+        .site-footer a {
+            color: #737373;
+            text-decoration: none;
+        }
+
+        .site-footer a:hover {
+            text-decoration: underline;
+        }
     </style>
     
     <!-- Privacy-friendly analytics by Plausible -->
@@ -726,8 +898,8 @@
         <section class="hero">
             <div class="hero-text">
                 <div class="hero-brand">Glide</div>
-                <h1>Subtitles that keep viewers watching to the end</h1>
-                <p>Focus and Calm modes add cognitive anchors to your captions so ADHD and fatigued viewers can follow every line.</p>
+                <h1>Make subtitles easier to read for ADHD and fatigued viewers</h1>
+                <p>Glide adds bold cognitive anchors to your SRT, VTT, and ASS captions so viewers stay focused and watch to the end.</p>
             </div>
             
             <div class="upload-panel">
@@ -738,7 +910,7 @@
                     <div class="dropzone-icon">📁</div>
                     <div class="dropzone-text">Upload SRT, VTT, or ASS</div>
                     <div class="dropzone-subtext">Drag & drop or click to browse. Max 5MB.</div>
-                    <input type="file" id="fileInput" accept=".srt,.vtt" hidden>
+                    <input type="file" id="fileInput" accept=".srt,.vtt,.ass" hidden>
                 </div>
                 
                 <div class="file-info" id="fileInfo">
@@ -786,7 +958,7 @@
         </section>
 
         <!-- YouTube Workflow Section -->
-        <section class="workflow-section">
+        <section id="how" class="workflow-section">
             <h2>For YouTube creators</h2>
             <p class="workflow-subtitle">Enhance your existing captions in three quick steps</p>
             <div class="workflow-steps">
@@ -829,6 +1001,36 @@
                     <div class="demo-text">I need to 𝐟𝐨𝐜𝐮𝐬 on this 𝐢𝐦𝐩𝐨𝐫𝐭𝐚𝐧𝐭 task right now.</div>
                 </div>
             </div>
+
+            <div style="max-width:50rem;margin:2rem auto 0;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,15rem),1fr));gap:1.5rem;">
+                <div>
+                    <div class="demo-label">Before</div>
+                    <img src="/screenshot-before.png" alt="Standard subtitles before Glide processing" style="width:100%;border-radius:0.5rem;border:1px solid #e5e5e5;">
+                </div>
+                <div>
+                    <div class="demo-label">After</div>
+                    <img src="/screenshot-after.png" alt="Bold subtitles after Glide processing" style="width:100%;border-radius:0.5rem;border:1px solid #e5e5e5;">
+                </div>
+            </div>
+        </section>
+
+        <!-- Long-form SEO content -->
+        <section class="content-section">
+            <h2>Why bold subtitles improve watch time</h2>
+            <p>Standard captions give every word the same visual weight. For viewers with ADHD or reading fatigue, that turns subtitles into a flat wall of text. Glide highlights the parts that matter, giving the eye natural anchor points so people stay with your content instead of drifting away.</p>
+
+            <h3>Focus mode vs Calm mode</h3>
+            <ul>
+                <li><strong>Focus</strong> — NLP-driven partial-word bolding with adjustable intensity. Best for tutorials, lectures, and dense dialogue.</li>
+                <li><strong>Calm</strong> — bolds up to two full words per line for gentle, predictable reading. Best for vlogs, podcasts, and relaxed viewing.</li>
+            </ul>
+
+            <h3>How to make SRT subtitles bold automatically</h3>
+            <p>Export captions from YouTube Studio or your editor as SRT, VTT, or ASS. Upload the file here, choose a mode, download the result, and re-upload to YouTube. The whole process takes under 30 seconds.</p>
+
+            <h3>Built for subtitle accessibility</h3>
+            <p>Over 360 million adults live with ADHD, and many more struggle with reading fatigue. Better subtitles aren't just about watch time — they help real people follow along more comfortably.</p>
+            <p>Glide preserves all timing, tags, and formatting. Only the text changes. Your files stay fully compatible with every player.</p>
         </section>
 
         <!-- API Documentation Section -->
@@ -977,6 +1179,16 @@ processed_text = response.json()['processedText']</pre>
             </div>
         </section>
     </main>
+
+    <footer class="site-footer">
+        <p>© 2026 Glide. Built for creators who care about watch time.</p>
+        <p style="margin-top:0.5rem;">
+            <a href="https://github.com/vineetxkhurana/glide" style="display:inline-flex;align-items:center;gap:0.35rem;">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+                GitHub
+            </a>
+        </p>
+    </footer>
 
 </body>
 </html>
