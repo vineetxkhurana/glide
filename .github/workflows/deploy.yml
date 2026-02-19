@@ -49,7 +49,7 @@ jobs:
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: pages deploy apps/web-app/dist --project-name=glide-web-app --commit-dirty=true
+          command: pages deploy apps/web-app/dist --project-name=glide-web-app --branch=production --commit-dirty=true
 
   deploy-api:
     name: Deploy API Worker
