@@ -1,23 +1,65 @@
 import { Hono } from 'hono'
 import { cors } from 'hono/cors'
+import { z } from 'zod'
 import { processSubtitles } from '@glide/engine-core'
 import {
   FREE_TIER_LIMIT,
   LICENSE_CACHE_TTL_SECONDS,
   LEMON_SQUEEZY_API_URL,
   LICENSE_INSTANCE_NAME,
-  SUPPORTED_FORMATS,
-  SUPPORTED_MODES,
-  MIN_INTENSITY,
-  MAX_INTENSITY,
-  DEFAULT_INTENSITY,
   RATE_LIMIT_REQUESTS,
-  RATE_LIMIT_WINDOW_SECONDS
+  RATE_LIMIT_WINDOW_SECONDS,
+  MAX_REQUEST_SIZE_BYTES
 } from './constants.js'
 
 const app = new Hono()
 
-app.use('/*', cors())
+const processRequestSchema = z.object({
+  text: z.string().min(1, 'Text cannot be empty').max(10_000_000, 'Text exceeds maximum length'),
+  format: z.enum(['srt', 'vtt', 'ass', 'plain'], {
+    errorMap: () => ({ message: 'format must be one of: srt, vtt, ass, plain' })
+  }),
+  mode: z.enum(['focus', 'calm'], {
+    errorMap: () => ({ message: 'mode must be one of: focus, calm' })
+  }),
+  intensity: z.number().min(0.1).max(1.0).optional().default(0.5),
+  licenseKey: z.string()
+  .regex(/^[A-Z0-9-]{8,50}$/, 'Invalid license key format')
+  .optional()
+  .nullable()
+})
+
+const ALLOWED_ORIGINS = [
+  'https://glide-web-app.pages.dev',
+  'http://localhost:5173'
+]
+
+app.use('/*', cors({
+  origin: ALLOWED_ORIGINS,
+  credentials: true,
+  maxAge: 86400
+}))
+
+app.use('/*', async (c, next) => {
+  await next()
+  c.header('X-Content-Type-Options', 'nosniff')
+  c.header('X-Frame-Options', 'DENY')
+  c.header('Strict-Transport-Security', 'max-age=31536000; includeSubDomains')
+  c.header('Referrer-Policy', 'strict-origin-when-cross-origin')
+  c.header('Permissions-Policy', 'geolocation=(), microphone=(), camera=()')
+})
+
+app.use('/process', async (c, next) => {
+  const contentLength = c.req.header('content-length')
+  if (!contentLength) {
+    return c.json({ error: 'Content-Length header required' }, 411)
+  }
+  const size = parseInt(contentLength, 10)
+  if (size > MAX_REQUEST_SIZE_BYTES) {
+    return c.json({ error: 'Payload too large. Maximum size: 10MB' }, 413)
+  }
+  await next()
+})
 
 app.get('/health', (c) => c.json({ status: 'ok' }))
 
@@ -46,9 +88,23 @@ async function checkRateLimit(ip, env) {
   return { allowed: true, remaining: RATE_LIMIT_REQUESTS - count - 1 }
 }
 
+async function verifyWebhookSignature(body, signature, secret) {
+  const encoder = new TextEncoder()
+  const key = await crypto.subtle.importKey(
+    'raw', encoder.encode(secret), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']
+  )
+  const signed = await crypto.subtle.sign('HMAC', key, encoder.encode(body))
+  const expected = Array.from(new Uint8Array(signed)).map(b => b.toString(16).padStart(2, '0')).join('')
+  return expected === signature
+}
+
 async function verifyLicenseWithCache(key, env) {
   if (!key || !env?.LEMON_API_KEY) return { valid: false }
-  
+
+  // Check revocation first
+  const revoked = await env.REVOKED_KEYS?.get(`revoked:${key}`)
+  if (revoked) return { valid: false }
+
   const cache = env.LICENSE_CACHE
   if (!cache) {
     console.warn('LICENSE_CACHE not available, skipping cache')
@@ -174,23 +230,18 @@ app.post('/process', async (c) => {
       )
     }
     
-    const { text, format, mode, intensity, licenseKey } = await c.req.json()
+    const body = await c.req.json()
+    const validationResult = processRequestSchema.safeParse(body)
     
-    if (!text || !format || !mode) {
-      return c.json({ error: 'Missing required fields' }, 400)
+    if (!validationResult.success) {
+      const errors = validationResult.error.errors.map(e => ({
+        field: e.path.join('.'),
+        message: e.message
+      }))
+      return c.json({ error: 'Validation failed', details: errors }, 400)
     }
     
-    if (!SUPPORTED_FORMATS.includes(format)) {
-      return c.json({ error: `format must be one of: ${SUPPORTED_FORMATS.join(', ')}` }, 400)
-    }
-    
-    if (!SUPPORTED_MODES.includes(mode)) {
-      return c.json({ error: `mode must be one of: ${SUPPORTED_MODES.join(', ')}` }, 400)
-    }
-    
-    const safeIntensity = typeof intensity === 'number' 
-      ? Math.min(MAX_INTENSITY, Math.max(MIN_INTENSITY, intensity))
-      : DEFAULT_INTENSITY
+    const { text, format, mode, intensity, licenseKey } = validationResult.data
     
     const license = await verifyLicenseWithCache(licenseKey, c.env)
     
@@ -209,7 +260,7 @@ app.post('/process', async (c) => {
       text: inputText,
       format,
       mode,
-      intensity: safeIntensity,
+      intensity,
       emphasisMode: 'html'
     })
     
@@ -221,6 +272,36 @@ app.post('/process', async (c) => {
   } catch (error) {
     console.error('Processing error:', error)
     return c.json({ error: 'Internal server error' }, 500)
+  }
+})
+
+app.post('/webhook/license', async (c) => {
+  try {
+    const secret = c.env.LEMON_WEBHOOK_SECRET
+    if (!secret) return c.json({ error: 'Webhook not configured' }, 500)
+
+    const signature = c.req.header('x-signature')
+    if (!signature) return c.json({ error: 'Missing signature' }, 401)
+
+    const rawBody = await c.req.text()
+    const valid = await verifyWebhookSignature(rawBody, signature, secret)
+    if (!valid) return c.json({ error: 'Invalid signature' }, 401)
+
+    const { event_name, data } = JSON.parse(rawBody)
+    const licenseKey = data?.attributes?.first_order_item?.license_key
+
+    if (!licenseKey) return c.json({ received: true, action: 'no_key' })
+
+    if (event_name === 'order_refunded' || event_name === 'subscription_cancelled' || event_name === 'license_key_deactivated') {
+      await c.env.LICENSE_CACHE.delete(`license:${licenseKey}`)
+      await c.env.REVOKED_KEYS.put(`revoked:${licenseKey}`, '1')
+      return c.json({ received: true, action: 'revoked' })
+    }
+
+    return c.json({ received: true, action: 'ignored' })
+  } catch (error) {
+    console.error('Webhook error:', error)
+    return c.json({ error: 'Webhook processing failed' }, 500)
   }
 })
 
