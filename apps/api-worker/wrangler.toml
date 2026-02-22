@@ -10,5 +10,9 @@ id = "c5f87ebd1e224afd997f3c06866eacd8"
 binding = "RATE_LIMIT_KV"
 id = "af3f5b2dca754c24974e2ea8d4d7319f"
 
+[[kv_namespaces]]
+binding = "REVOKED_KEYS"
+id = "d7fdd40a96d9440da42c568d825c0773"
+
 [build]
 command = "npm run build"
