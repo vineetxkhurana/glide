@@ -50,12 +50,14 @@ Husky runs lint + format on every commit automatically.
 ## Deploy
 
 **API Worker:**
+
 ```bash
 cd apps/api-worker
 npm run deploy
 ```
 
 **Web App:**
+
 ```bash
 cd apps/web-app
 npm run build
@@ -65,6 +67,7 @@ npx wrangler pages deploy dist
 ## Environment Variables
 
 **API Worker** (via `wrangler secret put`):
+
 - `LEMON_API_KEY` - Lemon Squeezy API key for license verification
 
 ## License

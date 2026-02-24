@@ -29,7 +29,12 @@
     "test": "npm run test --workspace=packages/engine-core"
   },
   "lint-staged": {
-    "*.{js,ts}": ["eslint --fix", "prettier --write"],
-    "*.{json,md,html,css}": ["prettier --write"]
+    "*.{js,ts}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{json,md,html,css}": [
+      "prettier --write"
+    ]
   }
 }
