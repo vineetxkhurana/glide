@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { width: 280px; font-family: Inter, system-ui, sans-serif; padding: 16px; background: #fff; }
+    .header { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
+    .header img { width: 32px; height: 32px; border-radius: 6px; }
+    .header h1 { font-size: 18px; font-weight: 700; color: #1d4ed8; }
+    .toggle-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+    .toggle-label { font-size: 13px; font-weight: 500; }
+    .toggle { position: relative; width: 40px; height: 22px; }
+    .toggle input { opacity: 0; width: 0; height: 0; }
+    .toggle .slider { position: absolute; inset: 0; background: #d1d5db; border-radius: 11px; cursor: pointer; transition: 0.2s; }
+    .toggle .slider::before { content: ''; position: absolute; width: 16px; height: 16px; left: 3px; bottom: 3px; background: white; border-radius: 50%; transition: 0.2s; }
+    .toggle input:checked + .slider { background: #1d4ed8; }
+    .toggle input:checked + .slider::before { transform: translateX(18px); }
+    .status { font-size: 11px; text-align: center; margin-bottom: 12px; padding: 6px; border-radius: 4px; display: none; }
+    .status.error { display: block; background: #fef2f2; color: #dc2626; }
+    .status.success { display: block; background: #f0fdf4; color: #16a34a; }
+    .mode-btns { display: flex; gap: 6px; margin-bottom: 16px; }
+    .mode-btn { flex: 1; padding: 8px; border: 2px solid #e5e5e5; border-radius: 6px; background: white; font-size: 12px; font-weight: 500; cursor: pointer; text-align: center; transition: 0.15s; }
+    .mode-btn:hover { border-color: #93c5fd; }
+    .mode-btn.active { border-color: #1d4ed8; background: #1d4ed8; color: white; }
+    .intensity-row { margin-bottom: 12px; }
+    .intensity-row.disabled { opacity: 0.4; pointer-events: none; }
+    .intensity-header { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 4px; }
+    .intensity-slider { width: 100%; height: 4px; border-radius: 2px; -webkit-appearance: none; background: #e5e5e5; outline: none; }
+    .intensity-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 14px; height: 14px; border-radius: 50%; background: #1d4ed8; cursor: pointer; }
+    .footer { font-size: 11px; color: #a3a3a3; text-align: center; margin-top: 4px; }
+    .footer a { color: #1d4ed8; text-decoration: none; }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <img src="icons/icon-128.png" alt="Glide">
+    <h1>Glide</h1>
+  </div>
+
+  <div class="toggle-row">
+    <span class="toggle-label">Enable on YouTube</span>
+    <label class="toggle">
+      <input type="checkbox" id="enabled">
+      <span class="slider"></span>
+    </label>
+  </div>
+
+  <div class="status" id="status"></div>
+
+  <div class="mode-btns">
+    <button class="mode-btn active" data-mode="focus">Focus</button>
+    <button class="mode-btn" data-mode="calm">Calm</button>
+  </div>
+
+  <div class="intensity-row" id="intensityRow">
+    <div class="intensity-header">
+      <span>Intensity</span>
+      <span id="intensityValue">0.5</span>
+    </div>
+    <input type="range" class="intensity-slider" id="intensity" min="0.1" max="1" step="0.1" value="0.5">
+  </div>
+
+  <div class="footer">
+    Glide on <a href="https://glide-web-app.pages.dev" target="_blank">Web</a>
+  </div>
+
+  <script src="src/popup.js"></script>
+</body>
+</html>

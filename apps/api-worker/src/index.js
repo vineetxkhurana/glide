@@ -4,6 +4,7 @@ import { z } from 'zod'
 import { processSubtitles } from '@glide/engine-core'
 import {
   FREE_TIER_LIMIT,
+  EXTENSION_FREE_TIER_LIMIT,
   LICENSE_CACHE_TTL_SECONDS,
   LEMON_SQUEEZY_API_URL,
   LICENSE_INSTANCE_NAME,
@@ -23,6 +24,7 @@ const processRequestSchema = z.object({
     errorMap: () => ({ message: 'mode must be one of: focus, calm' })
   }),
   intensity: z.number().min(0.1).max(1.0).optional().default(0.5),
+  emphasisMode: z.enum(['html', 'unicode']).optional(),
   licenseKey: z.string()
   .regex(/^[A-Z0-9-]{8,50}$/, 'Invalid license key format')
   .optional()
@@ -34,8 +36,17 @@ const ALLOWED_ORIGINS = [
   'http://localhost:5173'
 ]
 
+// Add your Chrome extension ID after publishing to Chrome Web Store
+// For development, allow all chrome extensions. Lock down before production.
+const ALLOWED_EXTENSION_IDS = []
+
 app.use('/*', cors({
-  origin: ALLOWED_ORIGINS,
+  origin: (origin) => {
+    if (ALLOWED_ORIGINS.includes(origin)) return origin
+    if (ALLOWED_EXTENSION_IDS.length && ALLOWED_EXTENSION_IDS.includes(origin)) return origin
+    if (!ALLOWED_EXTENSION_IDS.length && origin?.startsWith('chrome-extension://')) return origin
+    return null
+  },
   credentials: true,
   maxAge: 86400
 }))
@@ -172,16 +183,16 @@ async function verifyLicenseFromAPI(key, env) {
   }
 }
 
-function truncateSubtitles(text, format) {
+function truncateSubtitles(text, format, freeLimit) {
   const lines = text.split('\n')
   const result = []
   let count = 0
   
   if (format === 'plain') {
     return {
-      text: lines.slice(0, FREE_TIER_LIMIT).join('\n'),
-      truncated: lines.length > FREE_TIER_LIMIT,
-      linesProcessed: lines.length > FREE_TIER_LIMIT ? FREE_TIER_LIMIT : null
+      text: lines.slice(0, freeLimit).join('\n'),
+      truncated: lines.length > freeLimit,
+      linesProcessed: lines.length > freeLimit ? freeLimit : null
     }
   }
   
@@ -189,14 +200,14 @@ function truncateSubtitles(text, format) {
     for (const line of lines) {
       if (line.startsWith('Dialogue:')) {
         count++
-        if (count > FREE_TIER_LIMIT) break
+        if (count > freeLimit) break
       }
       result.push(line)
     }
     return {
       text: result.join('\n'),
-      truncated: count > FREE_TIER_LIMIT,
-      linesProcessed: count > FREE_TIER_LIMIT ? FREE_TIER_LIMIT : null
+      truncated: count > freeLimit,
+      linesProcessed: count > freeLimit ? freeLimit : null
     }
   }
   
@@ -204,15 +215,15 @@ function truncateSubtitles(text, format) {
   for (const line of lines) {
     if (line.includes('-->')) {
       count++
-      if (count > FREE_TIER_LIMIT) break
+      if (count > freeLimit) break
     }
     result.push(line)
   }
   
   return {
     text: result.join('\n'),
-    truncated: count > FREE_TIER_LIMIT,
-    linesProcessed: count > FREE_TIER_LIMIT ? FREE_TIER_LIMIT : null
+    truncated: count > freeLimit,
+    linesProcessed: count > freeLimit ? freeLimit : null
   }
 }
 
@@ -241,16 +252,21 @@ app.post('/process', async (c) => {
       return c.json({ error: 'Validation failed', details: errors }, 400)
     }
     
-    const { text, format, mode, intensity, licenseKey } = validationResult.data
+    const { text, format, mode, intensity, emphasisMode, licenseKey } = validationResult.data
     
     const license = await verifyLicenseWithCache(licenseKey, c.env)
+    
+    // Extension requests get a higher free tier limit
+    const origin = c.req.header('origin') || ''
+    const isExtension = origin.startsWith('chrome-extension://')
+    const freeLimit = isExtension ? EXTENSION_FREE_TIER_LIMIT : FREE_TIER_LIMIT
     
     let inputText = text
     let truncated = false
     let linesProcessed = null
     
     if (!license.valid) {
-      const truncateResult = truncateSubtitles(text, format)
+      const truncateResult = truncateSubtitles(text, format, freeLimit)
       inputText = truncateResult.text
       truncated = truncateResult.truncated
       linesProcessed = truncateResult.linesProcessed
@@ -261,7 +277,7 @@ app.post('/process', async (c) => {
       format,
       mode,
       intensity,
-      emphasisMode: 'html'
+      emphasisMode
     })
     
     return c.json({

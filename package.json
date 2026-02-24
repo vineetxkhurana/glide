@@ -1,18 +1,35 @@
 {
-    "name": "glide",
-    "version": "1.0.0",
-    "private": true,
-    "type": "module",
-    "workspaces": [
-        "apps/*",
-        "packages/*"
-    ],
-    "dependencies": {
-        "compromise": "^14.14.5",
-        "tsx": "^4.21.0"
-    },
-    "devDependencies": {
-        "@vitest/ui": "^4.0.18",
-        "vitest": "^4.0.18"
-    }
+  "name": "glide",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "dependencies": {
+    "compromise": "^14.14.5",
+    "tsx": "^4.21.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@vitest/ui": "^4.0.18",
+    "eslint": "^10.0.1",
+    "eslint-config-prettier": "^10.1.8",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.2.7",
+    "prettier": "^3.8.1",
+    "vitest": "^4.0.18"
+  },
+  "scripts": {
+    "prepare": "husky",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "test": "npm run test --workspace=packages/engine-core"
+  },
+  "lint-staged": {
+    "*.{js,ts}": ["eslint --fix", "prettier --write"],
+    "*.{json,md,html,css}": ["prettier --write"]
+  }
 }

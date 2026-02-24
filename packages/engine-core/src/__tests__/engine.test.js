@@ -168,7 +168,7 @@ Hello world.`
     })
 
     expect(result.processedText).not.toContain('<b>')
-    expect(result.processedText).toMatch(/[𝐇𝐞𝐥𝐥𝐨]/)
+    expect(result.processedText).toMatch(/[𝐇𝐞𝐥𝐥𝐨]/u)
   })
 })
 

@@ -1,0 +1,5 @@
+/* Glide — subtitle styling */
+.ytp-caption-segment.glide-processed b {
+  font-weight: 700;
+  font-family: inherit;
+}

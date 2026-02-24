@@ -18,6 +18,12 @@ jobs:
 
       - run: npm ci --loglevel verbose
 
+      - name: Lint
+        run: npm run lint
+
+      - name: Format check
+        run: npm run format:check
+
       - name: Build engine-core
         run: npm run build --workspace=packages/engine-core
 
@@ -25,4 +31,4 @@ jobs:
         run: npx tsc --noEmit --project packages/engine-core/tsconfig.json
 
       - name: Run tests
-        run: npm run test --workspace=packages/engine-core || exit 1
+        run: npm test

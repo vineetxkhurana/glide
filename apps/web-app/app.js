@@ -140,7 +140,6 @@ processBtn.addEventListener('click', async () => {
         format,
         mode: selectedMode,
         intensity,
-        emphasisMode: 'html',
         licenseKey
       })
     })

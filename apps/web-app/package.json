@@ -3,8 +3,9 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
+    "zip:extension": "cd ../chrome-extension && zip -r ../web-app/public/glide-extension.zip . -x '.DS_Store' '*/.DS_Store'",
     "dev": "vite",
-    "build": "vite build",
+    "build": "npm run zip:extension && vite build",
     "preview": "vite preview"
   },
   "devDependencies": {
