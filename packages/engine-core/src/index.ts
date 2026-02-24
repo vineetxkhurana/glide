@@ -1,10 +1,10 @@
-import { processSrt } from './formats/srt'
-import { processVtt } from './formats/vtt'
-import { processAss } from './formats/ass'
-import { processFocusLine } from './bionic'
-import { processCalmLine } from './calm'
+import { processSrt } from './formats/srt';
+import { processVtt } from './formats/vtt';
+import { processAss } from './formats/ass';
+import { processFocusLine } from './bionic';
+import { processCalmLine } from './calm';
 
-export type SubtitleFormat = 'srt' | 'vtt' | 'ass' | 'plain'
+export type SubtitleFormat = 'srt' | 'vtt' | 'ass' | 'plain';
 export type EmphasisMode = 'html' | 'unicode';
 
 export interface ProcessOptions {

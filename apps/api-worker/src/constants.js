@@ -1,11 +1,12 @@
 // Processing limits
 export const FREE_TIER_LIMIT = 300;
+export const EXTENSION_FREE_TIER_LIMIT = 1500; // ~1 hour video worth of captions
 export const MAX_FILE_SIZE_MB = 5;
 export const MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024;
 export const MAX_REQUEST_SIZE_BYTES = 10 * 1024 * 1024; // 10MB
 
 // Rate limiting
-export const RATE_LIMIT_REQUESTS = 10;
+export const RATE_LIMIT_REQUESTS = 30;
 export const RATE_LIMIT_WINDOW_SECONDS = 60;
 
 // License verification

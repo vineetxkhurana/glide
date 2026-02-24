@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Privacy Policy – Glide</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font-family: Inter, system-ui, sans-serif;
+        color: #1a1a1a;
+        line-height: 1.7;
+        max-width: 680px;
+        margin: 0 auto;
+        padding: 2rem 1.5rem;
+      }
+      h1 {
+        font-size: 1.75rem;
+        font-weight: 700;
+        color: #1d4ed8;
+        margin-bottom: 0.5rem;
+      }
+      .updated {
+        font-size: 0.85rem;
+        color: #6b7280;
+        margin-bottom: 2rem;
+      }
+      h2 {
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin-top: 1.75rem;
+        margin-bottom: 0.5rem;
+      }
+      p,
+      li {
+        font-size: 0.95rem;
+        margin-bottom: 0.75rem;
+      }
+      ul {
+        padding-left: 1.25rem;
+      }
+      a {
+        color: #1d4ed8;
+        text-decoration: none;
+      }
+      a:hover {
+        text-decoration: underline;
+      }
+      .back {
+        display: inline-block;
+        margin-bottom: 1.5rem;
+        font-size: 0.9rem;
+      }
+    </style>
+  </head>
+  <body>
+    <a class="back" href="/">&larr; Back to Glide</a>
+    <h1>Privacy Policy</h1>
+    <p class="updated">Last updated: February 23, 2026</p>
+
+    <h2>What Glide Does</h2>
+    <p>
+      Glide is a subtitle readability tool. It processes subtitle text to add bold emphasis on key
+      syllables, making captions easier to read. Glide is available as a web app and a Chrome
+      extension.
+    </p>
+
+    <h2>Data We Process</h2>
+    <p>When you use Glide, subtitle text is sent to our API for processing. This includes:</p>
+    <ul>
+      <li>
+        <strong>Subtitle text</strong> — the raw caption content from your uploaded file (web app)
+        or the active YouTube video (Chrome extension).
+      </li>
+      <li>
+        <strong>Processing settings</strong> — your chosen mode (Focus/Calm) and intensity level.
+      </li>
+    </ul>
+
+    <h2>Data We Do NOT Collect</h2>
+    <ul>
+      <li>
+        We do not store your subtitle text. It is processed in memory and discarded immediately.
+      </li>
+      <li>We do not collect personal information, browsing history, or YouTube watch history.</li>
+      <li>We do not use cookies or tracking scripts.</li>
+      <li>We do not sell or share any data with third parties.</li>
+    </ul>
+
+    <h2>Chrome Extension</h2>
+    <p>The Glide Chrome extension only activates on YouTube (<code>youtube.com</code>). It:</p>
+    <ul>
+      <li>Reads subtitle data from the active video's caption track.</li>
+      <li>
+        Sends subtitle text to our API (<code>glide-api-worker.glide-bionic.workers.dev</code>) for
+        processing.
+      </li>
+      <li>
+        Stores your preferences (enabled state, mode, intensity) locally using
+        <code>chrome.storage</code>.
+      </li>
+      <li>Does not access any other websites, tabs, or browser data.</li>
+    </ul>
+
+    <h2>License Keys</h2>
+    <p>
+      If you purchase a license, your license key is validated via LemonSqueezy's API. We cache
+      validation results temporarily (5 minutes) to reduce API calls. We do not store your payment
+      information.
+    </p>
+
+    <h2>Rate Limiting</h2>
+    <p>
+      We use IP-based rate limiting to prevent abuse. Your IP address is used only for rate counting
+      and is not stored permanently.
+    </p>
+
+    <h2>Hosting</h2>
+    <p>
+      Glide's API runs on Cloudflare Workers. The web app is hosted on Cloudflare Pages. Both are
+      subject to
+      <a href="https://www.cloudflare.com/privacypolicy/">Cloudflare's Privacy Policy</a>.
+    </p>
+
+    <h2>Contact</h2>
+    <p>
+      Questions about this policy? Reach out at
+      <a href="mailto:workpile21@gmail.com">privacy@glide-bionic.com</a>.
+    </p>
+  </body>
+</html>
